@@ -16,6 +16,13 @@ module SimpleCredit
 
     default_scope lambda {order(id: :desc)}
 
+    after_save {|hist|
+      user   = hist.user
+      credit = user.credit
+
+      credit.update_attributes(value: user.credit_histories.sum(:delta))
+    }
+
     def model=(obj)
       self.to_id   = obj.id
       self.to_type = obj.class.to_s
@@ -43,8 +50,9 @@ module SimpleCredit
             what      = "#{event}_#{self.to_s}"
             condition = options[:if].call(model)
 
-            user.credit_histories.create(model: model, delta: delta, what: what)
-            user.add_to_credit(delta) if condition
+            user.credit_histories.create(model: model,
+                                         delta: delta,
+                                         what: what) if condition
           end
         end
       end
@@ -59,8 +67,12 @@ module SimpleCredit
     end
 
     module InstanceMethods
-      def add_to_credit(delta)
-        credit.update_attributes(value: credit_value + delta)
+      def add_credit(delta, scene, model)
+        what = "create_#{model.class.to_s}"
+        credit_histories.create(delta: delta,
+                                scene: scene,
+                                model: model,
+                                what:  what)
       end
 
       def credit_value
