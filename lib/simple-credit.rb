@@ -1,13 +1,7 @@
 require 'active_record'
+require 'simple-credit/credit'
 
 module SimpleCredit
-  class Credit < ActiveRecord::Base
-    attr_accessible :user, :value
-
-    belongs_to :user
-    validates :user_id, uniqueness: true
-  end
-
   class CreditHistory < ActiveRecord::Base
     attr_accessible :model, :user, :delta, :scene, :what
 
