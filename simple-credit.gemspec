@@ -1,6 +1,8 @@
+require 'simple-credit/version'
+
 Gem::Specification.new do |s|
   s.name        = "simple-credit"
-  s.version     = "0.0.1"
+  s.version     = SimpleCredit::VERSION
   s.summary     = "Simple user credit library."
   s.description = "A Simple user credit library for ActiveRecord."
   s.authors     = ["Kaid Wong"]
