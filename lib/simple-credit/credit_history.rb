@@ -11,10 +11,11 @@ module SimpleCredit
       user       = hist.user
       credit     = user.credit
       sum        = user.credit_histories.sum(:delta)
-      is_highest = sum > user.highest_credit
+      value      = sum >= 0 ? sum : 0
+      is_highest = value > user.highest_credit
 
-      credit.update_attributes(value: sum)
-      credit.update_attributes(highest_value: sum) if is_highest
+      credit.update_attributes(value: value)
+      credit.update_attributes(highest_value: value) if is_highest
     }
 
     def model=(obj)

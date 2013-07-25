@@ -12,11 +12,13 @@ describe SimpleCredit do
     end
 
     describe "#add_credit" do
-      before {dummy}
-      subject {user.add_credit(4, :xixi, dummy)}
+      before   {dummy}
+      let(:op) {user.add_credit(-10000, :sha, dummy)}
+      subject  {user.add_credit(4, :xixi, dummy)}
 
       it {expect {subject}.to change {user.credit_histories.count}.by(1)}
       it {expect {subject}.to change {user.credit_value}.from(2).to(6)}
+      it {expect {op}.to change {user.credit_value}.from(2).to(0)}
       its(:scene) {should be :xixi}
       its(:delta) {should be 4}
       its(:model) {should eq dummy}
