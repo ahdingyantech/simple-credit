@@ -3,6 +3,7 @@ class SetupSimpleCredit < ActiveRecord::Migration
     create_table :credits do |t|
       t.integer :user_id
       t.integer :value, default: 0
+      t.integer :highest_value, default: 0
       t.timestamps
     end
 

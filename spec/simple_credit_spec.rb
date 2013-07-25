@@ -21,6 +21,18 @@ describe SimpleCredit do
       its(:delta) {should be 4}
       its(:model) {should eq dummy}
     end
+
+    describe "#highest_credit" do
+      subject  {user.highest_credit}
+      let(:op) {
+        user.add_credit(-50, :biubiu, dummy)
+        user.add_credit(-49, :jiujiu, dummy)
+      }
+      before   {user.add_credit(100, :hehe, dummy)}
+        
+      it {should be 102}
+      it {expect {op}.not_to change {subject}}
+    end
   end
 
   describe SimpleCredit::ModelMethods do

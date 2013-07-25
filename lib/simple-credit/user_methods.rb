@@ -15,17 +15,23 @@ module SimpleCredit
                                 what:  what)
       end
 
-      def credit_value
-        credit.value
+      def highest_credit
+        self.credit.highest_value
       end
 
-      def credit_relation
-        Credit.where(user_id: self.id)
+      def credit_value
+        credit.value
       end
 
       def credit
         return credit_relation.create if credit_relation.blank?
         credit_relation.first
+      end
+
+      private
+
+      def credit_relation
+        Credit.where(user_id: self.id)
       end
     end
   end

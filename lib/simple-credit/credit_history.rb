@@ -8,10 +8,13 @@ module SimpleCredit
     default_scope lambda {order(id: :desc)}
 
     after_save {|hist|
-      user   = hist.user
-      credit = user.credit
+      user       = hist.user
+      credit     = user.credit
+      sum        = user.credit_histories.sum(:delta)
+      is_highest = sum > user.highest_credit
 
-      credit.update_attributes(value: user.credit_histories.sum(:delta))
+      credit.update_attributes(value: sum)
+      credit.update_attributes(highest_value: sum) if is_highest
     }
 
     def model=(obj)
