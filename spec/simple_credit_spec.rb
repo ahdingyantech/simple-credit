@@ -26,7 +26,7 @@ describe SimpleCredit do
       subject  {user.highest_credit}
       let(:op) {
         user.add_credit(-50, :biubiu, dummy)
-        user.add_credit(-49, :jiujiu, dummy)
+        user.add_credit(49,  :jiujiu, dummy)
       }
       before   {user.add_credit(100, :hehe, dummy)}
         
