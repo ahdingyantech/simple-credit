@@ -14,7 +14,7 @@ module SimpleCredit
             user      = options[:user].call(model)
             delta     = options[:delta].call(model)
             what      = "#{event}_#{self.to_s}"
-            condition = options[:if].call(model)
+            condition = options[:if] ? options[:if].call(model) : true
 
             user.credit_histories.create(model: model,
                                          delta: delta,
