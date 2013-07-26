@@ -15,8 +15,29 @@ module SimpleCredit
                                 what:  what)
       end
 
+      def cancel_add_credit(scene, model)
+        last = credit_histories
+          .where(scene: scene, to_id: model.id)
+          .order(:id => :desc)
+          .first
+        refund = last.before - last.after
+        self.credit_histories.create(scene:     scene,
+                                     model:     model,
+                                     delta:     refund,
+                                     what:      :cancel,
+                                     canceled_id: last.id)
+      end
+
       def highest_credit
         self.credit.highest_value
+      end
+
+      def max_deduction
+        - credit_value
+      end
+
+      def zero_credit?
+        hist.user.credit_value == 0
       end
 
       def credit_value

@@ -20,16 +20,32 @@ describe SimpleCredit do
       it {expect {subject}.to change {user.credit_value}.from(2).to(6)}
       it {expect {op}.to change {user.credit_value}.from(2).to(0)}
       it {
-        user.add_credit(-2, :haha, dummy)
-        expect {op}.not_to change {user.credit_histories.count}
+        user.add_credit(-12, :haha, dummy)
+        expect {op}.not_to change {user.credit_value}
       }
       its(:scene) {should be :xixi}
       its(:delta) {should be 4}
       its(:model) {should eq dummy}
+      its(:real)  {should be 4}
+    end
+
+    describe "#cancel_add_credit" do
+      let(:op) {user.add_credit(100, :lala, dummy)}
+      before   {op}
+      subject  {user.cancel_add_credit(:lala, dummy)}
+
+      it {expect {subject}.to change {user.credit_histories.count}.by(1)}
+      it {expect {subject}.to change {user.credit_value}.from(102).to(2)}
+      its(:canceled_id) {should be op.id}
+      its(:real)   {should be -100}
+      its(:before) {should be 102}
+      its(:after)  {should be 2}
+      its(:what)   {should be :cancel}
     end
 
     describe "#highest_credit" do
       subject  {user.highest_credit}
+
       let(:op) {
         user.add_credit(-50, :biubiu, dummy)
         user.add_credit(49,  :jiujiu, dummy)

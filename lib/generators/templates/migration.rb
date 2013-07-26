@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class SetupSimpleCredit < ActiveRecord::Migration
   def change
     create_table :credits do |t|
@@ -14,6 +15,10 @@ class SetupSimpleCredit < ActiveRecord::Migration
       t.integer :to_id
       t.string  :to_type
       t.string  :what
+      t.integer :real   #实际增减
+      t.integer :before
+      t.integer :after
+      t.integer :canceled_id
       t.timestamps
     end
   end
