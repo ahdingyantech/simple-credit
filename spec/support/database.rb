@@ -16,7 +16,7 @@ end
 SetupSimpleCredit.migrate(:up)
 
 class DummyModel < ActiveRecord::Base
-  attr_accessible :nonsense
+  attr_accessible :bla
   include SimpleCredit::ModelMethods
 
   belongs_to :user
@@ -24,7 +24,9 @@ class DummyModel < ActiveRecord::Base
   record_credit(:scene => :credit_for_being_dummy,
                 :on    => [:create, :update, :destroy],
                 :user  => lambda {|model| model.user},
-                :delta => lambda {|model| 2},
+                :delta => lambda {|model|
+                  model.bla == 16 ? :cancel : 2
+                },
                 :if    => lambda {|model| model.dummy})
 end
 

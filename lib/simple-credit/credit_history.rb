@@ -9,11 +9,7 @@ module SimpleCredit
     default_scope lambda {order(id: :desc)}
 
     before_save do |hist|
-      user          = hist.user
-      delta         = hist.delta
-      max_deduction = user.max_deduction
-
-      hist.real   = delta < max_deduction ? max_deduction : delta
+      hist.real   = hist.calculate_real
       hist.before = hist.user.credit_value
       hist.after  = hist.user.credit_value + hist.real
     end
@@ -24,6 +20,10 @@ module SimpleCredit
 
       hist.user.credit.update_attributes(value: value)
       hist.user.credit.update_attributes(highest_value: value) if is_highest
+    end
+
+    def calculate_real
+       delta < user.max_deduction ? user.max_deduction : delta
     end
 
     def sum

@@ -62,6 +62,14 @@ describe SimpleCredit do
       it {expect {dummy}.to change {user.credit_value}.by(2)}
       it {expect {dummy.update_attributes(bla: 1)}.to change {user.credit_value}.by(4)}
       it {expect {dummy.destroy}.to change {user.credit_value}.by(4)}
+
+      context "if delta lambda returns `:cancel`" do
+        before   {user.add_credit(100, :nihao, dummy)}
+        let(:op) {dummy.update_attributes(bla: 16)}
+
+        it {expect {op}.to change {user.credit_histories.count}.by(1)}
+        it {expect {op}.to change {user.credit_value}.from(102).to(100)}
+      end
     end
   end
 end
