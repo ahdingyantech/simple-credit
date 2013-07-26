@@ -1,4 +1,4 @@
-require 'simple-credit/version'
+require './lib/simple-credit/version'
 
 Gem::Specification.new do |s|
   s.name        = "simple-credit"
