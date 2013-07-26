@@ -19,6 +19,10 @@ describe SimpleCredit do
       it {expect {subject}.to change {user.credit_histories.count}.by(1)}
       it {expect {subject}.to change {user.credit_value}.from(2).to(6)}
       it {expect {op}.to change {user.credit_value}.from(2).to(0)}
+      it {
+        user.add_credit(-2, :haha, dummy)
+        expect {op}.not_to change {user.credit_histories.count}
+      }
       its(:scene) {should be :xixi}
       its(:delta) {should be 4}
       its(:model) {should eq dummy}
