@@ -21,11 +21,25 @@ class DummyModel < ActiveRecord::Base
 
   belongs_to :user
 
+  record_credit(:scene => :up_down,
+                :on    => [:save],
+                :user  => lambda {|model| model.user},
+                :delta => lambda {|model|
+                  case model.bla
+                  when 3 then 4
+                  when -3 then -4
+                  end
+                },
+                :if    => lambda {|model| model.bla && model.bla.abs == 3})
+
   record_credit(:scene => :credit_for_being_dummy,
                 :on    => [:create, :update, :destroy],
                 :user  => lambda {|model| model.user},
                 :delta => lambda {|model|
-                  model.bla == 16 ? :cancel : 2
+                  case model.bla
+                  when 16 then :cancel
+                  else 2
+                  end
                 },
                 :if    => lambda {|model| model.dummy})
 end

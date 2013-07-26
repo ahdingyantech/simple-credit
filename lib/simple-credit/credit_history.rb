@@ -9,6 +9,18 @@ module SimpleCredit
     default_scope lambda {order(id: :desc)}
 
     before_save do |hist|
+      if !hist.what.to_s.include?("destroy")
+        prev = hist.prev(hist.scene, hist.model)
+
+        if prev && !hist.canceled_id
+          if hist.delta > 0 && prev.delta < 0
+            hist.delta = hist.delta - prev.delta
+          elsif hist.delta < 0 && prev.delta > 0
+            hist.delta = hist.delta - prev.delta
+          end
+        end if prev
+      end
+
       hist.real   = hist.calculate_real
       hist.before = hist.user.credit_value
       hist.after  = hist.user.credit_value + hist.real
@@ -20,6 +32,13 @@ module SimpleCredit
 
       hist.user.credit.update_attributes(value: value)
       hist.user.credit.update_attributes(highest_value: value) if is_highest
+    end
+
+    def prev(scene, model)
+      user.credit_histories
+        .where(scene: scene, to_id: model.id)
+        .order(:id => :desc)
+        .first
     end
 
     def calculate_real

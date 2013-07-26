@@ -70,6 +70,16 @@ describe SimpleCredit do
         it {expect {op}.to change {user.credit_histories.count}.by(1)}
         it {expect {op}.to change {user.credit_value}.from(102).to(100)}
       end
+
+      context "if operation reverted" do
+        let(:dummy) {FactoryGirl.create :dummy_model, user: user, bla: 3}
+        let(:op)    {dummy.update_attributes(bla: -3)}
+        before      {user.add_credit(100, :biu, dummy)}
+
+        it {
+          expect {op}.to change {user.credit_value}.from(104).to(96)
+        }
+      end
     end
   end
 end
