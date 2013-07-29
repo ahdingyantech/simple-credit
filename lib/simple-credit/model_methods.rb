@@ -14,7 +14,7 @@ module SimpleCredit
             scene     = options[:scene]
             user      = options[:user].call(model)
             delta     = options[:delta].call(model)
-            what      = "#{event}_#{self.to_s}"
+            what      = "#{event}_#{self.class.to_s}"
             condition = options[:if] ? options[:if].call(model) : true
 
             return user.cancel_add_credit(scene, model) if delta == :cancel

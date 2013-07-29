@@ -8,7 +8,7 @@ ActiveRecord::Schema.define do
   create_table :dummy_models, :force => true do |t|
     t.integer :user_id
     t.boolean :dummy, :default => false
-    t.integer :bla
+    t.string  :bla
     t.timestamps
   end unless table_exists?(:dummy_models)
 end
@@ -26,21 +26,17 @@ class DummyModel < ActiveRecord::Base
                 :user  => lambda {|model| model.user},
                 :delta => lambda {|model|
                   case model.bla
-                  when 3 then 4
-                  when -3 then -4
+                  when "+4"     then 4
+                  when "-4"     then -4
+                  when "cancel" then :cancel
                   end
                 },
-                :if    => lambda {|model| model.bla && model.bla.abs == 3})
+                :if    => lambda {|model| model.bla && model.bla[-1] == "4"})
 
   record_credit(:scene => :credit_for_being_dummy,
                 :on    => [:create, :update, :destroy],
                 :user  => lambda {|model| model.user},
-                :delta => lambda {|model|
-                  case model.bla
-                  when 16 then :cancel
-                  else 2
-                  end
-                },
+                :delta => lambda {|model| 2},
                 :if    => lambda {|model| model.dummy})
 end
 

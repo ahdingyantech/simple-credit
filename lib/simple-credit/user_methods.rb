@@ -18,13 +18,12 @@ module SimpleCredit
       def cancel_add_credit(scene, model)
         last = credit_histories
           .where(scene: scene, to_id: model.id)
-          .order(:id => :desc)
           .first
-        refund = - last.real
-        self.credit_histories.create(scene:     scene,
-                                     model:     model,
-                                     delta:     refund,
-                                     what:      :cancel,
+        return if !last
+        self.credit_histories.create(scene: scene,
+                                     model: model,
+                                     delta: - last.real,
+                                     what:  :cancel,
                                      canceled_id: last.id)
       end
 

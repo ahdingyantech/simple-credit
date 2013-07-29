@@ -60,20 +60,33 @@ describe SimpleCredit do
   describe SimpleCredit::ModelMethods do
     describe ".record_credit" do
       it {expect {dummy}.to change {user.credit_value}.by(2)}
-      it {expect {dummy.update_attributes(bla: 1)}.to change {user.credit_value}.by(4)}
+      it {expect {dummy.update_attributes(bla: :x)}.to change {user.credit_value}.by(4)}
       it {expect {dummy.destroy}.to change {user.credit_value}.by(4)}
 
       context "if delta lambda returns `:cancel`" do
-        before   {user.add_credit(100, :nihao, dummy)}
-        let(:op) {dummy.update_attributes(bla: 16)}
+        let(:dummy) {FactoryGirl.create :dummy_model, user: user}
+        let(:op)    {dummy.update_attributes(bla: "cancel")}
 
-        it {expect {op}.to change {user.credit_histories.count}.by(1)}
-        it {expect {op}.to change {user.credit_value}.from(102).to(100)}
+        before {
+          user.add_credit(100, :nihao, dummy)
+        }
+
+        it {expect {op}.not_to change {user.credit_histories.count}}
+
+        it {
+          dummy.update_attributes(bla: "+4")
+          expect {op}.to change {user.credit_value}.from(104).to(100)
+        }
+
+        it {
+          dummy.update_attributes(bla: "-4")
+          expect {op}.to change {user.credit_value}.from(96).to(100)
+        }
       end
 
       context "if operation reverted" do
-        let(:dummy) {FactoryGirl.create :dummy_model, user: user, bla: 3}
-        let(:op)    {dummy.update_attributes(bla: -3)}
+        let(:dummy) {FactoryGirl.create :dummy_model, user: user, bla: "+4"}
+        let(:op)    {dummy.update_attributes(bla: "-4")}
         before      {user.add_credit(100, :biu, dummy)}
 
         it {
